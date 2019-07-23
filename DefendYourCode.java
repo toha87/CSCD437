@@ -82,18 +82,20 @@ public class DefendYourCode {
 
     private static boolean Password(String password, String time) throws NoSuchAlgorithmException {
 
-        String str = "caffebabe";
-        byte[] salt = str.getBytes();
-
-        String securePassword = SHA_256(password, salt);
-
         String passwordFromFile = "";
+        String saltFromFile = "";
 
         if (time.equals("first")) {
+        
+         Random rand = new Random();
+         String str = Integer.toString(rand.nextInt(1000));
+         byte[] salt = str.getBytes();
+         
+         String securePassword = SHA_256(password, salt);
 
             try (PrintWriter out = new PrintWriter("password.txt")) {
                 out.println(securePassword);
-
+                out.println(str);
                 return true;
             } catch (IOException ex) {
                 ex.printStackTrace();
@@ -107,10 +109,15 @@ public class DefendYourCode {
 
                 Scanner out = new Scanner(new FileReader("password.txt"));
                 passwordFromFile = out.nextLine();
+                saltFromFile = out.nextLine();
 
             } catch (FileNotFoundException e) {
 
             }
+            
+             byte[] salt = saltFromFile.getBytes();
+             String securePassword = SHA_256(password, salt);
+             
 
 
             if (passwordFromFile.equals(securePassword)) {
@@ -128,7 +135,8 @@ public class DefendYourCode {
         return false;
 
     }
-
+    
+    // https://howtodoinjava.com/security/how-to-generate-secure-password-hash-md5-sha-pbkdf2-bcrypt-examples/
     private static String SHA_256(String passwordToHash, byte[] salt) {
         String generatedPassword = null;
         try {
