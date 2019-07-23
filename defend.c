@@ -19,7 +19,7 @@ int main() {
 	}
 	do{
 		int i;
-		for(i = 0; i < 57; i++) {
+		for(i = 0; i < 56; i++) {
 			putc(s1[i], stdout);
 		}
 		putc('\n', stdout);
@@ -27,7 +27,7 @@ int main() {
 	putc('\n', stdout);
 	do{
 		int i;
-		for(i = 0; i < 56; i++) {
+		for(i = 0; i < 55; i++) {
 			putc(s2[i], stdout);
 		}
 		putc('\n', stdout);
