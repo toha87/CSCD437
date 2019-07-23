@@ -2,17 +2,22 @@ import java.sql.SQLOutput;
 import java.util.*;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.PrintStream;
 import java.security.SecureRandom;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.regex.Pattern;
+import java.io.PrintWriter;
+import java.io.FileReader;
 
 
 public class DefendYourCode {
 
-	private static Scanner inputFile = null;
-	private static PrintStream outputFile = null;
-    
-    public static void main(String[] args) {
+    private static Scanner inputFile = null;
+    private static PrintStream outputFile = null;
+
+    public static void main(String[] args) throws NoSuchAlgorithmException {
         Scanner kb = new Scanner(System.in);
         boolean done = false;
         String spare = null;
@@ -20,7 +25,7 @@ public class DefendYourCode {
         String lname = null;
         long firstValue = 0;
         long secondValue = 0;
-        
+
 
         while (!done) {
             System.out.println("Enter first name(minimum 2 characters, only letters):");
@@ -37,7 +42,7 @@ public class DefendYourCode {
         while (!done) {
             System.out.println("Enter first number[-2147483648, 2147483647]:");
             spare = kb.nextLine();
-            if(values(spare)) {
+            if (values(spare)) {
                 firstValue = Long.valueOf(spare);
                 done = true;
             }
@@ -46,7 +51,7 @@ public class DefendYourCode {
         while (!done) {
             System.out.println("Enter second number[-2147483648, 2147483647]:");
             spare = kb.nextLine();
-            if(values(spare)) {
+            if (values(spare)) {
                 secondValue = Long.valueOf(spare);
                 done = true;
             }
@@ -56,24 +61,89 @@ public class DefendYourCode {
         getInputFileScanner(kb); // C:\Users\Jeff\Input_test_file.txt
         getOutputFileWritter(kb);  // C:\Users\Jeff\Output_File.txt
         writeOutputFile(fname, lname, firstValue, secondValue);
-                
-        
-        while(!done) {
+
+
+        while (!done) {
             System.out.print("Please enter password: ");
             String password = kb.nextLine();
+            done = Password(password, "first");
 
-            Password(password);
+        }
+        done = false;
+
+        while (!done) {
+            System.out.print("Please re-enter your password: ");
+            String password = kb.nextLine();
+
+            done = Password(password, "second");
+
         }
     }
 
-    private static void Password(String password) {
+    private static boolean Password(String password, String time) throws NoSuchAlgorithmException {
 
-        SecureRandom rand = new SecureRandom();
+        String str = "caffebabe";
+        byte[] salt = str.getBytes();
 
-        String salt = Integer.toString(rand.nextInt(1000));
+        String securePassword = SHA_256(password, salt);
 
-        System.out.println(password + salt);
+        String passwordFromFile = "";
 
+        if (time.equals("first")) {
+
+            try (PrintWriter out = new PrintWriter("password.txt")) {
+                out.println(securePassword);
+
+                return true;
+            } catch (IOException ex) {
+                ex.printStackTrace();
+                return false;
+            }
+        }
+
+        if (time.equals("second")) {
+
+            try {
+
+                Scanner out = new Scanner(new FileReader("password.txt"));
+                passwordFromFile = out.nextLine();
+
+            } catch (FileNotFoundException e) {
+
+            }
+
+
+            if (passwordFromFile.equals(securePassword)) {
+
+                System.out.println("You Got It Right!");
+                return true;
+
+            } else {
+
+                System.out.println("Wrong Password! Try Again!");
+                return false;
+            }
+        }
+
+        return false;
+
+    }
+
+    private static String SHA_256(String passwordToHash, byte[] salt) {
+        String generatedPassword = null;
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            md.update(salt);
+            byte[] bytes = md.digest(passwordToHash.getBytes());
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < bytes.length; i++) {
+                sb.append(Integer.toString((bytes[i] & 0xff) + 0x100, 16).substring(1));
+            }
+            generatedPassword = sb.toString();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        return generatedPassword;
     }
 
     private static boolean name(String name) {
@@ -84,90 +154,88 @@ public class DefendYourCode {
         try {
             int number = Integer.valueOf(value);
             return true;
-        }
-        catch (NumberFormatException e) {
+        } catch (NumberFormatException e) {
             return false;
         }
     }
+
     /***
-     * 
+     *
      * @param kb     * 
      * @return valid file name of a file at exist in the current directory and is not already open.
      */
     private static void getInputFileScanner(Scanner kb) {
-    	 File file = null;	     	     
-	     boolean isValidFileName = false;
-	     
-	     do {
-	    	 System.out.println("Enter the name of the input text file, that must already exist.");
-	    	 String fileName = kb.nextLine();
-	    	 
-	    	 if (fileName == null)
-	 			throw new IllegalArgumentException("Error: The file name passed in was null");
-	 		if (fileName.equals(""))
-	 			throw new IllegalArgumentException("Error: The file name passed in was empty");
-	 		
-	 		file = new File(fileName);	
-	 		if (!file.exists()){
-				System.out.println("Error: The input file does not exist!");
-	 		}
-	 		else if (!file.canRead()){
-	 			System.out.println("Error: Can not read from input file: " + file.getName());	 			
-	 		}
-	 		
-	 		
-			try {
-				inputFile = new Scanner(file);
-				// System.out.println("Debug - the input file was created! ");
-				isValidFileName = true;
-			}
-			catch(FileNotFoundException e){
-				System.out.println("an exception occurred in openInputFile: " + e.getMessage());				
-			}
-	     }
-	     while(!isValidFileName);
+        File file = null;
+        boolean isValidFileName = false;
+
+        do {
+            System.out.println("Enter the name of the input text file, that must already exist.");
+            String fileName = kb.nextLine();
+
+            if (fileName == null)
+                throw new IllegalArgumentException("Error: The file name passed in was null");
+            if (fileName.equals(""))
+                throw new IllegalArgumentException("Error: The file name passed in was empty");
+
+            file = new File(fileName);
+            if (!file.exists()) {
+                System.out.println("Error: The input file does not exist!");
+            } else if (!file.canRead()) {
+                System.out.println("Error: Can not read from input file: " + file.getName());
+            }
+
+
+            try {
+                inputFile = new Scanner(file);
+                // System.out.println("Debug - the input file was created! ");
+                isValidFileName = true;
+            } catch (FileNotFoundException e) {
+                System.out.println("an exception occurred in openInputFile: " + e.getMessage());
+            }
+        }
+        while (!isValidFileName);
     }
-    
+
     private static void getOutputFileWritter(Scanner kb) {
-    	boolean isValidFileName = false;
-	     
-	     do {
-	    	 System.out.println("Enter the name of the output text file, that must already exist.");
-	    	 String fileName = kb.nextLine();
-	    	 
-	    	 if(fileName == null) {
-	 			System.out.println("Error: The output file name was null");
-	 			return;
-	 		}
-	 		if(fileName.equals("") ) {
-	 			System.out.println("Error: The output file was an empty string");
-	 			return;			
-	 		}	 		
-	 		
-	 		try {
-	 			outputFile = new PrintStream(fileName);
-	 			isValidFileName = true;
-	 			
-	 		} catch (Exception e) {
-	 			System.out.println("Error: An exception occurred opening the output file named " + fileName);
-	 		}
-	     }
-	     while(!isValidFileName);
+        boolean isValidFileName = false;
+
+        do {
+            System.out.println("Enter the name of the output text file, that must already exist.");
+            String fileName = kb.nextLine();
+
+            if (fileName == null) {
+                System.out.println("Error: The output file name was null");
+                return;
+            }
+            if (fileName.equals("")) {
+                System.out.println("Error: The output file was an empty string");
+                return;
+            }
+
+            try {
+                outputFile = new PrintStream(fileName);
+                isValidFileName = true;
+
+            } catch (Exception e) {
+                System.out.println("Error: An exception occurred opening the output file named " + fileName);
+            }
+        }
+        while (!isValidFileName);
     }
- 
+
     private static void writeOutputFile(String fname, String lname, long firstValue, long secondValue) {
-    	outputFile.println(fname + " " + lname);
-    	 
-    	outputFile.println(firstValue + " + " + secondValue + " = " + (firstValue + secondValue) );
-    	outputFile.println(firstValue + " x " + secondValue + " = " + (firstValue * secondValue) + "\n");
-    	
-    	while(inputFile.hasNext()) {        	    
-        	outputFile.print(inputFile.nextLine());
-        } 
-    	
-    	inputFile.close();
+        outputFile.println(fname + " " + lname);
+
+        outputFile.println(firstValue + " + " + secondValue + " = " + (firstValue + secondValue));
+        outputFile.println(firstValue + " x " + secondValue + " = " + (firstValue * secondValue) + "\n");
+
+        while (inputFile.hasNext()) {
+            outputFile.print(inputFile.nextLine());
+        }
+
+        inputFile.close();
         outputFile.close();
-    	
+
     }
-    
+
 }//end of class
