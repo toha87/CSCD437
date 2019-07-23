@@ -238,7 +238,7 @@ public class DefendYourCode {
         outputFile.println(firstValue + " x " + secondValue + " = " + (firstValue * secondValue) + "\n");
 
         while (inputFile.hasNext()) {
-            outputFile.print(inputFile.nextLine());
+            outputFile.println(inputFile.nextLine());
         }
 
         inputFile.close();
