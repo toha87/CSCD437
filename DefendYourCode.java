@@ -7,6 +7,7 @@ import java.io.PrintStream;
 import java.security.SecureRandom;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.io.PrintWriter;
 import java.io.FileReader;
@@ -58,8 +59,8 @@ public class DefendYourCode {
         }
         done = false;
                 
-        getInputFileScanner(kb); // C:\Users\Jeff\Input_test_file.txt
-        getOutputFileWritter(kb);  // C:\Users\Jeff\Output_File.txt
+        getInputFileScanner(kb); 
+        getOutputFileWritter(kb);  
         writeOutputFile(fname, lname, firstValue, secondValue);
 
 
@@ -167,66 +168,81 @@ public class DefendYourCode {
         }
     }
 
-    /***
-     *
-     * @param kb     * 
-     * @return valid file name of a file at exist in the current directory and is not already open.
-     */
+    
     private static void getInputFileScanner(Scanner kb) {
         File file = null;
-        boolean isValidFileName = false;
-
+        boolean isValidFileName = false;        
+		
         do {
-            System.out.println("Enter the name of the input text file, that must already exist.");
-            String fileName = kb.nextLine();
-
+            System.out.println("Enter the name of the input text file (1-255 charactors), that must already exist in the current directory.");
+            String fileName = kb.nextLine();            
+            
             if (fileName == null)
                 throw new IllegalArgumentException("Error: The file name passed in was null");
             if (fileName.equals(""))
                 throw new IllegalArgumentException("Error: The file name passed in was empty");
-
-            file = new File(fileName);
-            if (!file.exists()) {
-                System.out.println("Error: The input file does not exist!");
-            } else if (!file.canRead()) {
-                System.out.println("Error: Can not read from input file: " + file.getName());
-            }
-
-
-            try {
-                inputFile = new Scanner(file);
-                // System.out.println("Debug - the input file was created! ");
-                isValidFileName = true;
-            } catch (FileNotFoundException e) {
-                System.out.println("an exception occurred in openInputFile: " + e.getMessage());
-            }
+          
+            Pattern pattern_FileName = Pattern.compile("^([A-Za-z0-9\\-\\_]){1,251}.txt$");  
+    		Matcher matcher_FileName = pattern_FileName.matcher(fileName);
+    		
+    		if(matcher_FileName.matches()) {
+    			
+	            file = new File("./" + fileName);
+	            
+	            if (!file.exists()) {
+	                System.out.println("Error: The input file does not exist!");
+	                isValidFileName = false;
+	            } else if (!file.canRead()) {
+	                System.out.println("Error: Can not read from input file: " + file.getName());
+	                isValidFileName = false;
+	            } 	
+	
+	            try {
+	                inputFile = new Scanner(file);	                
+	                isValidFileName = true;
+	            } 
+	            catch (FileNotFoundException e) {
+	                System.out.println("an exception occurred in openInputFile: " + e.getMessage());
+	            }
+    		}
+    		else
+    			System.out.println("Make sure you file name is 1 - 251 character in length and has a .txt file");
         }
         while (!isValidFileName);
     }
 
     private static void getOutputFileWritter(Scanner kb) {
         boolean isValidFileName = false;
-
+        File file = null;
+        
         do {
-            System.out.println("Enter the name of the output text file, that must already exist.");
+            System.out.println("Enter the name of the output text file (1-255 charactors), which will be created in the current directory.");
             String fileName = kb.nextLine();
 
-            if (fileName == null) {
-                System.out.println("Error: The output file name was null");
-                return;
-            }
-            if (fileName.equals("")) {
-                System.out.println("Error: The output file was an empty string");
-                return;
-            }
-
-            try {
-                outputFile = new PrintStream(fileName);
-                isValidFileName = true;
-
-            } catch (Exception e) {
-                System.out.println("Error: An exception occurred opening the output file named " + fileName);
-            }
+            Pattern pattern_FileName = Pattern.compile("^([A-Za-z0-9\\-\\_]){1,251}.txt$");  
+    		Matcher matcher_FileName = pattern_FileName.matcher(fileName);
+    		if(matcher_FileName.matches()) {
+    			    		
+	            if (fileName == null) {
+	                System.out.println("Error: The output file name was null");
+	                return;
+	            }
+	            if (fileName.equals("")) {
+	                System.out.println("Error: The output file was an empty string");
+	                return;
+	            }
+	
+	            file = new File("./" + fileName);
+	            try {
+	                outputFile = new PrintStream(file);
+	                isValidFileName = true;	
+	            } 
+	            catch (Exception e) {
+	                System.out.println("Error: An exception occurred opening the output file named " + fileName);
+	            }
+    		}
+    		else
+    			System.out.println("Make sure you file name is 1 - 251 character in length and has a .txt file");
         }
         while (!isValidFileName);
     }
