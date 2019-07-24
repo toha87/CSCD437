@@ -65,9 +65,12 @@ public class DefendYourCode {
 
 
         while (!done) {
+            System.out.println("Please enter a password that contains at least 10 characters and includes at least one upper case character, one lower case character, one digit and one punctuation mark");
             System.out.print("Please enter password: ");
             String password = kb.nextLine();
-            done = Password(password, "first");
+            
+            if( validatePassword(password))
+               done = Password(password, "first");
 
         }
         done = false;
@@ -75,10 +78,15 @@ public class DefendYourCode {
         while (!done) {
             System.out.print("Please re-enter your password: ");
             String password = kb.nextLine();
-
-            done = Password(password, "second");
+            
+            if( validatePassword(password))
+               done = Password(password, "second");
 
         }
+    }
+    
+    private static boolean validatePassword(String password) {
+        return Pattern.matches("^(?=.*\\d)(?=.*[a-z])(?=.*[.,\\/#!$%\\^&\\*;:{}=\\-_`~()])(?=.*[A-Z]).{10,15}$", password);
     }
 
     private static boolean Password(String password, String time) throws NoSuchAlgorithmException {
