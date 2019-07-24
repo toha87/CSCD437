@@ -3,6 +3,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <limits.h> //INT_MAX and INT_MIN
+
+#include "readInt.h"
 /*
 atoi to convert to integer
 */
@@ -37,6 +39,13 @@ int main() {
 
 	printf("%s %s", firstName, lastName); //only for testing
 	regfree(&regex);
+
+	// reads 2 ints from user
+	int done = -1;
+
+	do {
+		done = readInt();
+	} while(done != 0);
 
 	return 0;
 }
