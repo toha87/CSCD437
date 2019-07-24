@@ -5,13 +5,14 @@
 
 int readInt()
 {
+	int i;
     char str[MAX_STR_LEN] = {0};
     float num1, num2;
 
     printf("Enter two numbers separated by a space, numbers could be from -2147483648 to 2147483647: ");
     fgets(str, MAX_STR_LEN, stdin);
 
-    for(int i = 0; i < MAX_STR_LEN; i++)
+    for(i = 0; i < MAX_STR_LEN; i++)
     {
         if(!isdigit(str[i]) && (!isspace(str[i])) && (str[i] != '\0'))
         {
