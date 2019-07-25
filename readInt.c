@@ -6,6 +6,7 @@
 int readInt()
 {
 	int i;
+    float res_add, res_mult;
     char str[MAX_STR_LEN] = {0};
     float num1, num2;
 
@@ -28,9 +29,9 @@ int readInt()
     }
 
     sscanf(str, "%f%f", &num1, &num2);
-    
-    // for testing
-    printf("You entered %f and %f.", num1, num2);
+
+    res_add = num1 + num2;
+    res_mult = num1 * num2;
 
     return 0;
 }
