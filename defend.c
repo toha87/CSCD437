@@ -4,9 +4,9 @@
 #include <string.h>
 #include <limits.h> //INT_MAX and INT_MIN
 
-#include "readInt.h"
-File *getInputFile();
-File *getOutputFile();
+#include "readInt.c"
+FILE *getInputFile();
+FILE *getOutputFile();
 
 /*
 atoi to convert to integer
@@ -56,8 +56,9 @@ int main() {
 File *getInputFile() {
 	const FILE_NAME_BUF_SIZE = 255;
 	char filename[FILE_NAME_BUF_SIZE];
-	File *file = NULL;
-	bool isValidFileName = false;
+	FILE *file = NULL;
+	int isValidFileName = 0;
+	regex_t regex;
 
 	if (regcomp(&regex, "^([A-Za-z0-9\\-\\_]){1,251}.txt$", REG_EXTENDED)) {
 		return 1;
@@ -68,27 +69,29 @@ File *getInputFile() {
 		fgets(filename, FILE_NAME_BUF_SIZE, stdin);
 
 		if (regexec(&regex, filename, 0, NULL, 0)) {
-			isValidFileName = false;
+			isValidFileName = 0;
 			printf("Make sure you file name is 1 - 251 character in length and has a .txt file.\n");
 		}
 		else if (file = fopen(file, "r")) == NULL){
-			isValidFileName = false;
+			isValidFileName = 0;
 			printf("Error: Can not read from input file : \n");
 		}
 		else {
-			isValidFileName = true;
+			isValidFileName = 1;
 		}
 
 	} while (!isValidFileName);
-
+	
+	regfree(&regex);
 	return file;
 } //end of getInputFile function
 
 File *getOutputFile() {
 	const FILE_NAME_BUF_SIZE = 255;
 	char filename[FILE_NAME_BUF_SIZE];
-	File *file = NULL;
-	bool isValidFileName = false;
+	FILE *file = NULL;
+	int isValidFileName = 0;
+	regex_t regex;
 
 	if (regcomp(&regex, "^([A-Za-z0-9\\-\\_]){1,251}.txt$", REG_EXTENDED)) {
 		return 1;
@@ -99,19 +102,20 @@ File *getOutputFile() {
 		fgets(filename, FILE_NAME_BUF_SIZE, stdin);
 
 		if (regexec(&regex, filename, 0, NULL, 0)) {
-			isValidFileName = false;
+			isValidFileName = 0;
 			printf("Make sure you file name is 1 - 251 character in length and has a .txt file.\n");
 		}
 		else if (file = fopen(file, "w")) == NULL){
-		isValidFileName = false;
+		isValidFileName = 0;
 		printf("Error: Can not write to output file : \n");
 		}
 		else {
-			isValidFileName = true;
+			isValidFileName = 1;
 		}
 
 	} while (!isValidFileName);
 
+	regfree(&regex);
 	return file;
 } //end of getOutputFile function
 
