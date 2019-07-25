@@ -3,45 +3,21 @@
 #include <stdlib.h>
 #include <string.h>
 #include <limits.h> //INT_MAX and INT_MIN
-
+#include "fullname.c"
+#include "password.c"
 #include "readInt.c"
+
 FILE *getInputFile();
 FILE *getOutputFile();
 
-/*
-atoi to convert to integer
-*/
 int main() {
-	regex_t regex;
-	int result_reg;
 	char firstName[51];
 	char lastName[51];
-	char s1[] = "Enter first name(only letters are allowed, length [2,50]";
-	char s2[] = "Enter last name(only letters are allowed, length [2,50]";
 
-	if(regcomp(&regex, "\\s*^[a-zA-Z]{2,50}$\\s*", REG_EXTENDED)) {
-		return 1;
-	}
-	do{
-		int i;
-		for(i = 0; i < 56; i++) {
-			putc(s1[i], stdout);
-		}
-		putc('\n', stdout);
-	}while(fgets(firstName, sizeof(firstName), stdin) != NULL && regexec(&regex, firstName, 0, NULL, 0));
+	name(firstName, sizeof(firstName), lastName, sizeof(lastName));
+
+    printf("%s %s", firstName, lastName); //only for testing
 	putc('\n', stdout);
-	do{
-		int i;
-		for(i = 0; i < 55; i++) {
-			putc(s2[i], stdout);
-		}
-		putc('\n', stdout);
-	}while(fgets(lastName, sizeof(lastName), stdin) != NULL && regexec(&regex, lastName, 0, NULL, 0));
-	putc('\n', stdout);
-
-
-	printf("%s %s", firstName, lastName); //only for testing
-	regfree(&regex);
 
 	// reads 2 ints from user
 	int done = -1;
@@ -53,15 +29,15 @@ int main() {
 	return 0;
 }
 
-File *getInputFile() {
-	const FILE_NAME_BUF_SIZE = 255;
+FILE *getInputFile() {
+	const int FILE_NAME_BUF_SIZE = 255;
 	char filename[FILE_NAME_BUF_SIZE];
-	FILE *file = NULL;
+	FILE * file;
 	int isValidFileName = 0;
 	regex_t regex;
 
 	if (regcomp(&regex, "^([A-Za-z0-9\\-\\_]){1,251}.txt$", REG_EXTENDED)) {
-		return 1;
+		exit(1);
 	}
 
 	do {
@@ -72,7 +48,7 @@ File *getInputFile() {
 			isValidFileName = 0;
 			printf("Make sure you file name is 1 - 251 character in length and has a .txt file.\n");
 		}
-		else if (file = fopen(file, "r")) == NULL){
+		else if ((file = fopen(filename, "r")) == NULL){
 			isValidFileName = 0;
 			printf("Error: Can not read from input file : \n");
 		}
@@ -86,15 +62,15 @@ File *getInputFile() {
 	return file;
 } //end of getInputFile function
 
-File *getOutputFile() {
-	const FILE_NAME_BUF_SIZE = 255;
+FILE *getOutputFile() {
+	const int FILE_NAME_BUF_SIZE = 255;
 	char filename[FILE_NAME_BUF_SIZE];
-	FILE *file = NULL;
+	FILE * file;
 	int isValidFileName = 0;
 	regex_t regex;
 
 	if (regcomp(&regex, "^([A-Za-z0-9\\-\\_]){1,251}.txt$", REG_EXTENDED)) {
-		return 1;
+		exit(1);
 	}
 
 	do {
@@ -105,7 +81,7 @@ File *getOutputFile() {
 			isValidFileName = 0;
 			printf("Make sure you file name is 1 - 251 character in length and has a .txt file.\n");
 		}
-		else if (file = fopen(file, "w")) == NULL){
+		else if ((file = fopen(filename, "w")) == NULL){
 		isValidFileName = 0;
 		printf("Error: Can not write to output file : \n");
 		}
