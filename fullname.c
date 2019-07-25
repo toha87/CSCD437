@@ -4,15 +4,15 @@
 #include <stdlib.h>
 #include <string.h>
 #include <limits.h>
-void cleanstring(char string[], size_t length);
+void cleanstring(char string[], int length);
 
 void name(char fname[], size_t fsize, char lname[], size_t lsize) {
     regex_t regex;
-	int result_reg;
 	char s1[] = "Enter first name(only letters are allowed, length [2,50]";
 	char s2[] = "Enter last name(only letters are allowed, length [2,50]";
 
     if(regcomp(&regex, "\\s*^[a-zA-Z]{2,50}$\\s*", REG_EXTENDED)) {
+		exit(1);
 	}
 	do{
 		int i;
@@ -34,7 +34,7 @@ void name(char fname[], size_t fsize, char lname[], size_t lsize) {
 	regfree(&regex);
 }
 
-void cleanstring(char string[], size_t length) {
+void cleanstring(char string[], int length) {
     int i;
     for(i = 0 ; i < length; i++) {
         if(string[i] == '\n') {
