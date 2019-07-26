@@ -6,6 +6,7 @@
 #include "fullname.c"
 #include "password.c"
 #include "readInt.c"
+#include "writeToOutputFile.c"
 
 FILE *getInputFile();
 FILE *getOutputFile();
@@ -13,18 +14,26 @@ FILE *getOutputFile();
 int main() {
 	char firstName[51];
 	char lastName[51];
+	float num1, num2;
+	float res_add, res_mult;
 
 	name(firstName, sizeof(firstName), lastName, sizeof(lastName));
 
     printf("%s %s", firstName, lastName); //only for testing
 	putc('\n', stdout);
 
-	// reads 2 ints from user
-	int done = -1;
+	// reads 2 ints from the user
+	num1 = readInt();
+	num2 = readInt();
 
-	do {
-		done = readInt();
-	} while(done == -1);
+	res_add = num1 + num2;
+	res_mult = num1 * num2;
+
+	// input out file names
+
+	// password
+
+	writeToOutputFile(firstName, lastName, res_add, res_mult, "inputFileName", "outputFileName")
 
 	return 0;
 }
@@ -32,11 +41,11 @@ int main() {
 FILE *getInputFile() {
 	const int FILE_NAME_BUF_SIZE = 255;
 	char filename[FILE_NAME_BUF_SIZE];
-	FILE * file;
+	FILE *file;
 	int isValidFileName = 0;
 	regex_t regex;
 
-	if (regcomp(&regex, "^([A-Za-z0-9\\-\\_]){1,251}.txt$", REG_EXTENDED)) {
+	if (regcomp(&regex, "^([A-Za-z0-9]){1,251}.txt$", REG_EXTENDED)) {
 		exit(1);
 	}
 
@@ -69,7 +78,7 @@ FILE *getOutputFile() {
 	int isValidFileName = 0;
 	regex_t regex;
 
-	if (regcomp(&regex, "^([A-Za-z0-9\\-\\_]){1,251}.txt$", REG_EXTENDED)) {
+	if (regcomp(&regex, "^([A-Za-z0-9]){1,251}.txt$", REG_EXTENDED)) {
 		exit(1);
 	}
 
@@ -94,4 +103,3 @@ FILE *getOutputFile() {
 	regfree(&regex);
 	return file;
 } //end of getOutputFile function
-
