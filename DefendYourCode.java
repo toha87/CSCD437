@@ -59,8 +59,8 @@ public class DefendYourCode {
         }
         done = false;
                 
-        getInputFileScanner(kb); 
-        getOutputFileWritter(kb);  
+        String inputFileName = getInputFileScanner(kb); 
+        getOutputFileWritter(kb, inputFileName);  
         writeOutputFile(fname, lname, firstValue, secondValue);
 
 
@@ -177,23 +177,28 @@ public class DefendYourCode {
     }
 
     
-    private static void getInputFileScanner(Scanner kb) {
+    private static String getInputFileScanner(Scanner kb) {
         File file = null;
         boolean isValidFileName = false;        
-		
+        String fileName; 
         do {
             System.out.println("Enter the name of the input text file (1-255 charactors), that must already exist in the current directory.");
-            String fileName = kb.nextLine();            
+            fileName = kb.nextLine();            
             
-            if (fileName == null)
-                throw new IllegalArgumentException("Error: The file name passed in was null");
-            if (fileName.equals(""))
-                throw new IllegalArgumentException("Error: The file name passed in was empty");
-          
+
             Pattern pattern_FileName = Pattern.compile("^([A-Za-z0-9\\-\\_]){1,251}.txt$");  
     		Matcher matcher_FileName = pattern_FileName.matcher(fileName);
     		
-    		if(matcher_FileName.matches()) {
+            if (fileName == null) {   
+                System.out.println("Error: The file name passed in was null");
+                isValidFileName = false;
+            }
+            else if (fileName.equals("")) {
+            	System.out.println("Error: The file name passed in was empty");
+            	 isValidFileName = false;
+            }
+    		
+            else if(matcher_FileName.matches()) {
     			
 	            file = new File("./" + fileName);
 	            
@@ -206,7 +211,7 @@ public class DefendYourCode {
 	            } 	
 	
 	            try {
-	                inputFile = new Scanner(file);	                
+	            	inputFile = new Scanner(file);	                
 	                isValidFileName = true;
 	            } 
 	            catch (FileNotFoundException e) {
@@ -217,9 +222,10 @@ public class DefendYourCode {
     			System.out.println("Make sure you file name is 1 - 251 character in length and has a .txt file");
         }
         while (!isValidFileName);
+        return fileName;
     }
 
-    private static void getOutputFileWritter(Scanner kb) {
+    private static void getOutputFileWritter(Scanner kb, String inputFileName) {
         boolean isValidFileName = false;
         File file = null;
         
@@ -229,16 +235,21 @@ public class DefendYourCode {
 
             Pattern pattern_FileName = Pattern.compile("^([A-Za-z0-9\\-\\_]){1,251}.txt$");  
     		Matcher matcher_FileName = pattern_FileName.matcher(fileName);
-    		if(matcher_FileName.matches()) {
-    			    		
-	            if (fileName == null) {
-	                System.out.println("Error: The output file name was null");
-	                return;
-	            }
-	            if (fileName.equals("")) {
-	                System.out.println("Error: The output file was an empty string");
-	                return;
-	            }
+    		
+    		if (inputFileName.equalsIgnoreCase(fileName)  ) {
+            	System.out.println("Error: The output file name is the same as the input file name");
+                isValidFileName = false;                
+            }
+    		else if (fileName == null) {
+                System.out.println("Error: The output file name was null");
+                isValidFileName = false;
+            }
+    		else if (fileName.equals("")) {
+                System.out.println("Error: The output file was an empty string");
+                isValidFileName = false;
+            }
+    		else if(matcher_FileName.matches()) {
+    			
 	
 	            file = new File("./" + fileName);
 	            try {
