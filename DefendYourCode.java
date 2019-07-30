@@ -257,7 +257,7 @@ public class DefendYourCode {
     		else if(matcher_FileName.matches()) {
     			
 	
-	            file = new File("./" + fileName);
+	            file = new File(fileName);
 	            try {
 	                outputFile = new PrintStream(file);
 	                isValidFileName = true;	
