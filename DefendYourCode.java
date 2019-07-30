@@ -1,4 +1,8 @@
-import java.sql.SQLOutput;
+/*Team:
+ * Anatoli Railean
+ * Jeff Howes
+ * Grigory Ostanin*/
+
 import java.util.*;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -29,19 +33,19 @@ public class DefendYourCode {
 
 
         while (!done) {
-            System.out.println("Enter first name(minimum 2 characters, only letters):");
+            System.out.println("Enter first name(minimum 2 characters maximum 50, only letters):");
             fname = kb.nextLine().trim();
             done = name(fname);
         }
         done = false;
         while (!done) {
-            System.out.println("Enter last name(minimum 2 characters, only letters):");
+            System.out.println("Enter last name(minimum 2 characters maximum 50, only letters):");
             lname = kb.nextLine().trim();
             done = name(lname);
         }
         done = false;
         while (!done) {
-            System.out.println("Enter first number[-2147483648, 2147483647]:");
+            System.out.println("Enter first number[-2,147,483,648, 2,147,483,647]:");
             spare = kb.nextLine();
             if (values(spare)) {
                 firstValue = Long.valueOf(spare);
@@ -50,7 +54,7 @@ public class DefendYourCode {
         }
         done = false;
         while (!done) {
-            System.out.println("Enter second number[-2147483648, 2147483647]:");
+            System.out.println("Enter second number[-2,147,483,648, 2,147,483,647]:");
             spare = kb.nextLine();
             if (values(spare)) {
                 secondValue = Long.valueOf(spare);
@@ -65,7 +69,7 @@ public class DefendYourCode {
 
 
         while (!done) {
-            System.out.println("Please enter a password that contains at least 10 characters and includes at least one upper case character, one lower case character, one digit and one punctuation mark");
+            System.out.println("Please enter a password that contains at least 10 characters at maximum 50 characters and includes at least one upper case character, one lower case character, one digit and one punctuation mark");
             System.out.print("Please enter password: ");
             String password = kb.nextLine();
             
@@ -83,10 +87,12 @@ public class DefendYourCode {
                done = Password(password, "second");
 
         }
+        
+        kb.close();
     }
     
     private static boolean validatePassword(String password) {
-        return Pattern.matches("^(?=.*\\d)(?=.*[a-z])(?=.*[.,\\/#!$%\\^&\\*;:{}=\\-_`~()])(?=.*[A-Z]).{10,15}$", password);
+        return Pattern.matches("^(?=.*\\d)(?=.*[a-z])(?=.*[.,\\/#!$%\\^&\\*;:{}=\\-_`~()])(?=.*[A-Z]).{10,50}$", password);
     }
 
     private static boolean Password(String password, String time) throws NoSuchAlgorithmException {
@@ -182,11 +188,11 @@ public class DefendYourCode {
         boolean isValidFileName = false;        
         String fileName; 
         do {
-            System.out.println("Enter the name of the input text file (1-255 charactors), that must already exist in the current directory.");
+            System.out.println("Enter the name of the input text file (1-50 characters), that must already exist in the current directory.");
             fileName = kb.nextLine();            
             
 
-            Pattern pattern_FileName = Pattern.compile("^([A-Za-z0-9\\-\\_]){1,251}.txt$");  
+            Pattern pattern_FileName = Pattern.compile("^([A-Za-z0-9\\-\\_]){1,50}.txt$");  
     		Matcher matcher_FileName = pattern_FileName.matcher(fileName);
     		
             if (fileName == null) {   
@@ -200,7 +206,7 @@ public class DefendYourCode {
     		
             else if(matcher_FileName.matches()) {
     			
-	            file = new File("./" + fileName);
+	            file = new File(fileName);
 	            
 	            if (!file.exists()) {
 	                System.out.println("Error: The input file does not exist!");
@@ -219,7 +225,7 @@ public class DefendYourCode {
 	            }
     		}
     		else
-    			System.out.println("Make sure you file name is 1 - 251 character in length and has a .txt file");
+    			System.out.println("Make sure you file name is 1-50 character in length and has a .txt file");
         }
         while (!isValidFileName);
         return fileName;
@@ -230,10 +236,10 @@ public class DefendYourCode {
         File file = null;
         
         do {
-            System.out.println("Enter the name of the output text file (1-255 charactors), which will be created in the current directory.");
+            System.out.println("Enter the name of the output text file (1-50 characters), which will be created in the current directory.");
             String fileName = kb.nextLine();
 
-            Pattern pattern_FileName = Pattern.compile("^([A-Za-z0-9\\-\\_]){1,251}.txt$");  
+            Pattern pattern_FileName = Pattern.compile("^([A-Za-z0-9\\-\\_]){1,50}.txt$");  
     		Matcher matcher_FileName = pattern_FileName.matcher(fileName);
     		
     		if (inputFileName.equalsIgnoreCase(fileName)  ) {
@@ -261,7 +267,7 @@ public class DefendYourCode {
 	            }
     		}
     		else
-    			System.out.println("Make sure you file name is 1 - 251 character in length and has a .txt file");
+    			System.out.println("Make sure you file name is 1-50 character in length and has a .txt file");
         }
         while (!isValidFileName);
     }

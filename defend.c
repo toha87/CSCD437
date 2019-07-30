@@ -1,42 +1,38 @@
-#include <stdio.h>
-#include <regex.h>
-#include <stdlib.h>
-#include <string.h>
-#include <limits.h> //INT_MAX and INT_MIN
-#include "fullname.c"
-#include "password.c"
-#include "readInt.c"
-#include "writeToOutputFile.c"
-#include "FileName.c"
+/*Team:
+Grigory Ostanin
+Jeff Howes
+Anatoli Railean */
 
+#include "functions/fullName.h"
+#include "functions/password.h"
+#include "functions/readInt.h"
+#include "functions/writeToOutputFile.h"
+#include "functions/fileName.h"
 
 int main() {
 	char firstName[51];
 	char lastName[51];
-	float num1, num2;
-	float res_add, res_mult;
-	char inputFileName[255];
-	char outputFileName[255];
+	long long int num1, num2;
+	long long int res_add, res_mult;
+	char inputFileName[25];
+	char outputFileName[25];
 
 	name(firstName, sizeof(firstName), lastName, sizeof(lastName));
+	//printf("\n%s %s\n", firstName, lastName);
 
-    printf("%s %s", firstName, lastName); //only for testing
-	putc('\n', stdout);
-
-	// reads 2 ints from the user
-	num1 = readInt();
-	num2 = readInt();
+	num1 = readInt("Enter first ");
+	num2 = readInt("Enter second");
+	//printf("\n%lld %lld\n", num1, num2);
 
 	res_add = num1 + num2;
 	res_mult = num1 * num2;
 
-	// input out file names
-	getInputFileName(inputFileName);
-	getOutputFileName(outputFileName, inputFileName);
+	getInputFileName(inputFileName, sizeof(inputFileName));
+	getOutputFileName(outputFileName, inputFileName, sizeof(inputFileName));
 
-	// password
+	password();
 
-	writeToOutputFile(firstName, lastName, res_add, res_mult, "inputFileName", "outputFileName");
+	writeToOutputFile(firstName, lastName, res_add, res_mult, inputFileName, outputFileName);
 
 	return 0;
 }
